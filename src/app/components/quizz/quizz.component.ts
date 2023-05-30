@@ -40,14 +40,28 @@ export class QuizzComponent implements OnInit {
     this.nextStep()
   }
 
-  nextStep() {
+  async nextStep() {
     this.questionIndex += 1
 
     if(this.questionMaxIndex > this.questionIndex) {
       this.questionsSelected = this.questions[this.questionIndex]
     } else {
+      const finalAnswer: string = await this.checkResult(this.answers)
         this.finished = true
-        //verificar opcao ganhadora
+        this.answerSelected = quizz_questions.results[finalAnswer as keyof typeof quizz_questions.results]
     }
   }
+
+  async checkResult(answers: string[]) {
+    const result = answers.reduce((prev, curr, i, arr) => {
+      if(arr.filter(item =>  item === prev).length > arr.filter(item =>  item === curr).length) {
+        return prev
+      } else {
+        return curr
+      }
+    })
+
+    return result
+  }
+
 }
